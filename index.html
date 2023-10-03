@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Baldur's Gate 0.5</title>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="styles.css" />
+		<script src="https://unpkg.com/vue@next" defer></script>
+		<script src="app.js" defer></script>
+	</head>
+	<body>
+		<header>
+			<h1>Baldur's Gate 0.5</h1>
+		</header>
+		<div id="game">
+			<!-- Health Bars -->
+			<section id="monster" class="container">
+				<h2>Monster Health</h2>
+				<div class="healthbar">
+					<div
+						class="healthbar__value"
+						:style="monsterBarStyle"
+					></div>
+				</div>
+			</section>
+			<section id="player" class="container">
+				<h2>Your Health</h2>
+				<div class="healthbar">
+					<div class="healthbar__value" :style="playerBarStyle"></div>
+				</div>
+			</section>
+			<!-- hidden game over section -->
+			<section class="container" v-if="!isGameOn">
+				<h2>Game Over!</h2>
+				<h2>{{ msg }}</h2>
+				<button @click="newGame">Start a new Game</button>
+			</section>
+			<!-- move buttons -->
+			<section id="controls">
+				<button :disabled="!isGameOn" @click="attackMonster">
+					ATTACK
+				</button>
+				<button
+					:disabled="specialAvailable || !isGameOn"
+					@click="specialAttack"
+				>
+					SPECIAL ATTACK
+				</button>
+				<button :disabled="healAvailable || !isGameOn" @click="heal">
+					HEAL
+				</button>
+				<button :disabled="!isGameOn" @click="lose">SURRENDER</button>
+			</section>
+			<section id="log" class="container">
+				<h2>Battle Log</h2>
+				<ul v-for="log in battleLog">
+					<li v-if="log.isAttack">
+						<span
+							:class="{'log--player': log.attacker == 'Player', 'log--monster': log.attacker == 'Monster'}"
+							>{{ log.attacker }}</span
+						>
+						dealt
+						<span class="log--damage">{{ log.number }}</span> dmg to
+						<span
+							:class="{'log--player': log.receiver == 'Player', 'log--monster': log.receiver == 'Monster'}"
+							>{{ log.receiver }}</span
+						>
+					</li>
+					<li v-else>
+						<span
+							:class="{'log--player': log.receiver == 'Player', 'log--monster': log.receiver == 'Monster'}"
+							>{{ log.receiver }}</span
+						>
+						healed
+						<span class="log--heal">{{ log.number }}</span> hp
+					</li>
+				</ul>
+			</section>
+		</div>
+	</body>
+</html>
